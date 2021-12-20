@@ -9,8 +9,7 @@ import INotificationStore from '../../../types/INotificationStore';
  * @param strategy Function to compare notifications with the context
  * @returns An empty store of notifications
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
-export default function buildStore(props: object): INotificationStore {
+export default function buildStore(props: Record<string, unknown>): INotificationStore {
   const defaults = {
     context: {},
     total: 0,
@@ -22,5 +21,7 @@ export default function buildStore(props: object): INotificationStore {
     notifications: [],
   };
 
-  return mergeRight(defaults, props);
+  // using `object` is bad, but better here than as argument
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  return mergeRight(defaults, props as object);
 }
