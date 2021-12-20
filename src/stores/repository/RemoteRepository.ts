@@ -8,7 +8,7 @@ import { deleteAPI, fetchAPI } from '../../lib/ajax';
  * @example
  * class NotificationRepo extends RemoteRepository<Notification, NotificationStore> {}
  */
-export default abstract class RemoteRepository<Item extends Record<string, unknown>, Collection> {
+export default abstract class RemoteRepository<Item, Collection> {
   remotePathOrUrl: string;
 
   constructor(remotePathOrUrl: string) {
