@@ -18,7 +18,7 @@ export interface NotificationStore extends INotificationStore {
    *
    * @param queryParams Parameters to send to the API.
    */
-  fetch: (queryParams?: Object, options?: FetchOptions) => Promise<void>;
+  fetch: (queryParams?: Record<string, unknown>, options?: FetchOptions) => Promise<void>;
 
   /**
    * Fetch the next page of notifications from the API server. The notifications
@@ -26,7 +26,7 @@ export interface NotificationStore extends INotificationStore {
    *
    * @param queryParams Parameters to send to the API.
    */
-  fetchNextPage: (queryParams?: Object) => Promise<void>;
+  fetchNextPage: (queryParams?: Record<string, unknown>) => Promise<void>;
 
   /**
    * Mark all notifications as seen. Resets the `unseenCount` attribute.
@@ -59,9 +59,10 @@ export default function useNotifications(storeId = 'default'): NotificationStore
   const config = useConfig();
   const store = stores[storeId];
 
-  const fetch = (queryParams?: Object, options?: FetchOptions) => fetchStore(storeId, queryParams, options);
+  const fetch = (queryParams?: Record<string, unknown>, options?: FetchOptions) =>
+    fetchStore(storeId, queryParams, options);
 
-  const fetchNextPage = (queryParams: Object = {}, options?: FetchOptions) => {
+  const fetchNextPage = (queryParams: Record<string, unknown> = {}, options?: FetchOptions) => {
     const page = store.currentPage + 1;
     return fetchStore(storeId, { ...queryParams, page }, options);
   };

@@ -33,6 +33,6 @@ export function useAbly() {
 
   useEffect(() => {
     if (config.ws) return createRealtimeSubscription(config.ws);
-    else return () => {};
+    else return () => undefined;
   }, [config.ws]);
 }

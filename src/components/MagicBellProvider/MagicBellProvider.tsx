@@ -9,7 +9,7 @@ import RealtimeListener from '../RealtimeListener';
 
 type StoreConfig = {
   id: string;
-  defaultQueryParams: Object;
+  defaultQueryParams: Record<string, unknown>;
   defaults?: Partial<Omit<INotificationStore, 'context'>>;
 };
 

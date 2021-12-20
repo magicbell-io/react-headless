@@ -9,7 +9,8 @@ import INotificationStore from '../../../types/INotificationStore';
  * @param strategy Function to compare notifications with the context
  * @returns An empty store of notifications
  */
-export default function buildStore(props: Object): INotificationStore {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export default function buildStore(props: object): INotificationStore {
   const defaults = {
     context: {},
     total: 0,
