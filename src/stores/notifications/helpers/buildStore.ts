@@ -1,4 +1,5 @@
 import mergeRight from 'ramda/src/mergeRight';
+
 import INotificationStore from '../../../types/INotificationStore';
 
 /**

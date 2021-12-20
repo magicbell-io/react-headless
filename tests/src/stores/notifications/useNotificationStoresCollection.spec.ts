@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import faker from 'faker';
 import humps from 'humps';
 import { Response, Server } from 'miragejs';
+
 import * as ajax from '../../../../src/lib/ajax';
 import { useNotificationStoresCollection } from '../../../../src/stores/notifications';
 import NotificationFactory from '../../../factories/NotificationFactory';

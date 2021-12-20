@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import clientSettings from '../stores/clientSettings';
 
 interface ServerResponse {

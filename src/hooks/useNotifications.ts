@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+
 import useConfig from '../stores/config';
 import { useNotificationStoresCollection } from '../stores/notifications';
 import INotificationStore from '../types/INotificationStore';
@@ -53,7 +54,7 @@ export interface NotificationStore extends INotificationStore {
  * @example
  * const store = useNotifications('mentions');
  */
-export default function useNotifications(storeId: string = 'default'): NotificationStore | null {
+export default function useNotifications(storeId = 'default'): NotificationStore | null {
   const { stores, fetchStore, markAllAsSeen, markAllAsRead } = useNotificationStoresCollection();
   const config = useConfig();
   const store = stores[storeId];
