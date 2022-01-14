@@ -6,8 +6,19 @@ import NotificationRepository from '../stores/notifications/NotificationReposito
 import { WebSocketConfig } from '../types/IRemoteConfig';
 import { buildAPIHeaders } from './ajax';
 
-const pushEventAggregator = mitt();
-export { pushEventAggregator };
+// Note that we have two event emitters. An internal emitter which is used to
+// keep the store in sync with remote events. For example to mark a notification
+// as read when the user reads it in a different tab. And a public emitter, which
+// is not used by our code, but can be used by consumers such as the embeddable.
+// Technically, a single emitter could serve both goals, but that would involve
+// publishing a breaking change.
+
+// The internal emitter that used to keep the store in sync with remote
+export const pushEventAggregator = mitt();
+
+// A public emitter, that's not used by our internal code, but can be used by
+// consumers, such as the embeddable.
+export const emitter = mitt();
 
 /**
  * Open an authenticated connection to ably.
@@ -31,6 +42,23 @@ export function connectToAbly(config: WebSocketConfig) {
 }
 
 /**
+ * Publish events to the internal and public event emitter, based on the event source.
+ *
+ * @param event The name of the event.
+ * @param data The data object to pass along with the event.
+ * @param source The origin of the event, local for an action that's triggered by the user in the current tab, remote if it's an event from another instance that should be mirrored.
+ */
+function emit(event: string, data: unknown, source: 'local' | 'remote') {
+  if (source === 'remote') {
+    pushEventAggregator.emit(event, data);
+  }
+
+  // wrap the argument in an object, as mitt is limited to a single argument,
+  // and we don't want to change the interface of `data`.
+  emitter.emit(event, { data, source });
+}
+
+/**
  * Publish an ably event to the push event emitter. If the push event contains
  * the ID of a notification, this is fetched before emitting the event.
  *
@@ -40,21 +68,20 @@ export function handleAblyEvent(event: Ably.Types.Message) {
   const { clientId } = clientSettings.getState();
   const eventName = event.name.replace(/\//gi, '.');
   const eventData = event.data;
-
-  if (eventData.client_id && eventData.client_id === clientId) return Promise.resolve();
+  const source = eventData.client_id && eventData.client_id === clientId ? 'local' : 'remote';
 
   if (typeof eventData.id === 'string') {
     if (eventName === 'notifications.delete') {
-      pushEventAggregator.emit(eventName, eventData);
+      emit(eventName, eventData, source);
       return Promise.resolve(true);
     } else {
       const repository = new NotificationRepository();
       return repository.get(eventData.id).then((data) => {
-        pushEventAggregator.emit(eventName, data.notification);
+        emit(eventName, data.notification, source);
       });
     }
   }
 
-  pushEventAggregator.emit(eventName, eventData);
+  emit(eventName, eventData, source);
   return Promise.resolve();
 }
