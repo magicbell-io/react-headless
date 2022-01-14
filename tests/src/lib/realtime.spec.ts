@@ -123,6 +123,17 @@ describe('lib', () => {
 
       describe('the event has a client ID', () => {
         describe('the event was originated by this client', () => {
+          let server;
+
+          beforeEach(() => {
+            server = new Server({ environment: 'test', urlPrefix: 'https://api.magicbell.com', timing: 50 });
+            server.get('/notifications/uuid', { notification: sampleNotification });
+          });
+
+          afterEach(() => {
+            server.shutdown();
+          });
+
           it('does not emit the event', async () => {
             const { getState } = clientSettings;
             const spy = jest.spyOn(pushEventAggregator, 'emit');
