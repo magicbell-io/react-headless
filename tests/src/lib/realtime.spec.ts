@@ -3,7 +3,7 @@ import faker from 'faker';
 import { Server } from 'miragejs';
 
 import * as ajax from '../../../src/lib/ajax';
-import { connectToAbly, handleAblyEvent, pushEventAggregator } from '../../../src/lib/realtime';
+import { connectToAbly, emitter, handleAblyEvent, pushEventAggregator } from '../../../src/lib/realtime';
 import clientSettings from '../../../src/stores/clientSettings';
 import { sampleNotification } from '../../factories/NotificationFactory';
 
@@ -160,6 +160,46 @@ describe('lib', () => {
             expect(spy).toHaveBeenCalledTimes(1);
             spy.mockRestore();
           });
+        });
+      });
+
+      test('local events are only published to public emitter', async () => {
+        const localEmitter = jest.spyOn(pushEventAggregator, 'emit');
+        const publicEmitter = jest.spyOn(emitter, 'emit');
+        const clientId = clientSettings.getState().clientId;
+
+        await handleAblyEvent({
+          name: 'notifications/seen/all',
+          data: { client_id: clientId },
+        } as any);
+
+        expect(localEmitter).not.toHaveBeenCalled();
+        expect(publicEmitter).toHaveBeenCalledTimes(1);
+        expect(publicEmitter).toHaveBeenCalledWith('notifications.seen.all', {
+          data: { client_id: clientId },
+          source: 'local',
+        });
+      });
+
+      test('remote events are published to internal and public emitter', async () => {
+        const localEmitter = jest.spyOn(pushEventAggregator, 'emit');
+        const publicEmitter = jest.spyOn(emitter, 'emit');
+        const clientId = faker.random.alphaNumeric(10);
+
+        await handleAblyEvent({
+          name: 'notifications/seen/all',
+          data: { client_id: clientId },
+        } as any);
+
+        expect(localEmitter).toHaveBeenCalledTimes(1);
+        expect(localEmitter).toHaveBeenCalledWith('notifications.seen.all', {
+          client_id: clientId,
+        });
+
+        expect(publicEmitter).toHaveBeenCalledTimes(1);
+        expect(publicEmitter).toHaveBeenCalledWith('notifications.seen.all', {
+          data: { client_id: clientId },
+          source: 'remote',
         });
       });
     });
