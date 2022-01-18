@@ -1,8 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import faker from 'faker';
-
 import useMagicBellEvent from '../../../src/hooks/useMagicBellEvent';
-import { pushEventAggregator } from '../../../src/lib/realtime';
+import { eventAggregator } from '../../../src/lib/realtime';
 
 describe('hooks', () => {
   describe('useMagicBellEvent', () => {
@@ -14,7 +13,7 @@ describe('hooks', () => {
       renderHook(() => useMagicBellEvent(eventName, handler));
 
       act(() => {
-        pushEventAggregator.emit(eventName, data);
+        eventAggregator.emit(eventName, { data, source: 'remote' });
       });
 
       expect(handler).toHaveBeenCalledTimes(1);
@@ -24,15 +23,35 @@ describe('hooks', () => {
     it('cleans up on unmount', async () => {
       const eventName = faker.random.alphaNumeric();
       const handler = jest.fn();
+      const data = faker.random.objectElement();
+
       const { unmount } = renderHook(() => useMagicBellEvent(eventName, handler));
 
       await act(async () => {
         await unmount();
       });
 
-      pushEventAggregator.emit(eventName, {});
+      eventAggregator.emit(eventName, { data, source: 'remote' });
 
       expect(handler).not.toHaveBeenCalled();
+    });
+
+    describe('when listening to remote events only', () => {
+      describe('when the emitted event is not remote', () => {
+        it('does not invoke the handler function', () => {
+          const eventName = faker.random.alphaNumeric();
+          const handler = jest.fn();
+          const data = faker.random.objectElement();
+
+          renderHook(() => useMagicBellEvent(eventName, handler, { source: 'remote' }));
+
+          act(() => {
+            eventAggregator.emit(eventName, { data, source: 'local' });
+          });
+
+          expect(handler).not.toHaveBeenCalled();
+        });
+      });
     });
   });
 });
