@@ -52,6 +52,7 @@ export function connectToAbly(config: WebSocketConfig) {
  */
 export function emitEvent(event: string, data: unknown, source: EventSource) {
   if (source === 'remote') {
+    // Only to maintain backwards compatibility.
     pushEventAggregator.emit(event, data);
   }
 
