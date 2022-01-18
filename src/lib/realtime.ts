@@ -13,6 +13,7 @@ import { buildAPIHeaders } from './ajax';
 // publishing a breaking change.
 
 // The internal emitter that used to keep the store in sync with remote
+/** @deprecated */
 export const pushEventAggregator = mitt();
 
 // A public emitter, that's not used by our internal code, but can be used by
