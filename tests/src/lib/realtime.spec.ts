@@ -4,7 +4,7 @@ import { Server } from 'miragejs';
 import * as ajax from '../../../src/lib/ajax';
 import {
   connectToAbly,
-  emitter,
+  emitEvent,
   eventAggregator,
   handleAblyEvent,
   pushEventAggregator,
@@ -194,25 +194,22 @@ describe('lib', () => {
 
       test('local events are only published to public emitter', async () => {
         const localEmitter = jest.spyOn(pushEventAggregator, 'emit');
-        const publicEmitter = jest.spyOn(emitter, 'emit');
+        const publicEmitter = jest.spyOn(eventAggregator, 'emit');
         const clientId = clientSettings.getState().clientId;
 
-        await handleAblyEvent({
-          name: 'notifications/seen/all',
-          data: { client_id: clientId },
-        } as any);
+        emitEvent('notifications.seen.all', { client_id: clientId, notification_id: 'uuid' }, 'local');
 
         expect(localEmitter).not.toHaveBeenCalled();
         expect(publicEmitter).toHaveBeenCalledTimes(1);
         expect(publicEmitter).toHaveBeenCalledWith('notifications.seen.all', {
-          data: { client_id: clientId },
+          data: { client_id: clientId, notification_id: 'uuid' },
           source: 'local',
         });
       });
 
       test('remote events are published to internal and public emitter', async () => {
         const localEmitter = jest.spyOn(pushEventAggregator, 'emit');
-        const publicEmitter = jest.spyOn(emitter, 'emit');
+        const publicEmitter = jest.spyOn(eventAggregator, 'emit');
         const clientId = faker.random.alphaNumeric(10);
 
         await handleAblyEvent({
