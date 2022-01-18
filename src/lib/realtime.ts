@@ -19,6 +19,8 @@ export const pushEventAggregator = mitt();
 // consumers, such as the embeddable.
 export const eventAggregator = mitt();
 
+export type EventSource = 'local' | 'remote';
+
 /**
  * Open an authenticated connection to ably.
  *
@@ -47,7 +49,7 @@ export function connectToAbly(config: WebSocketConfig) {
  * @param data The data object to pass along with the event.
  * @param source The origin of the event, local for an action that's triggered by the user in the current tab, remote if it's an event from another instance that should be mirrored.
  */
-export function emitEvent(event: string, data: unknown, source: 'local' | 'remote') {
+export function emitEvent(event: string, data: unknown, source: EventSource) {
   if (source === 'remote') {
     pushEventAggregator.emit(event, data);
   }
