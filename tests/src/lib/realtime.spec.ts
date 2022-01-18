@@ -1,9 +1,14 @@
 import * as Ably from 'ably';
 import faker from 'faker';
 import { Server } from 'miragejs';
-
 import * as ajax from '../../../src/lib/ajax';
-import { connectToAbly, emitter, handleAblyEvent, pushEventAggregator } from '../../../src/lib/realtime';
+import {
+  connectToAbly,
+  emitter,
+  eventAggregator,
+  handleAblyEvent,
+  pushEventAggregator,
+} from '../../../src/lib/realtime';
 import clientSettings from '../../../src/stores/clientSettings';
 import { sampleNotification } from '../../factories/NotificationFactory';
 
@@ -19,6 +24,20 @@ describe('lib', () => {
         pushEventAggregator.off('test', callback);
 
         pushEventAggregator.emit('test');
+        expect(callback).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('eventAggregator', () => {
+      it('exposes an API for pubsub', () => {
+        const callback = jest.fn();
+        eventAggregator.on('test', callback);
+        eventAggregator.emit('test');
+
+        expect(callback).toHaveBeenCalledTimes(1);
+        eventAggregator.off('test', callback);
+
+        eventAggregator.emit('test');
         expect(callback).toHaveBeenCalledTimes(1);
       });
     });
@@ -74,6 +93,16 @@ describe('lib', () => {
 
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalledWith('notification.new', event.data);
+        spy.mockRestore();
+      });
+
+      it('emits the event to the eventAggregator', () => {
+        const spy = jest.spyOn(eventAggregator, 'emit');
+        const event = { name: 'notification/new', data: faker.helpers.createCard() } as Ably.Types.Message;
+        handleAblyEvent(event);
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith('notification.new', { data: event.data, source: 'remote' });
         spy.mockRestore();
       });
 
