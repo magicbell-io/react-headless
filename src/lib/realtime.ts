@@ -17,7 +17,7 @@ export const pushEventAggregator = mitt();
 
 // A public emitter, that's not used by our internal code, but can be used by
 // consumers, such as the embeddable.
-export const emitter = mitt();
+export const eventAggregator = mitt();
 
 /**
  * Open an authenticated connection to ably.
@@ -54,7 +54,7 @@ function emitEvent(event: string, data: unknown, source: 'local' | 'remote') {
 
   // wrap the argument in an object, as mitt is limited to a single argument,
   // and we don't want to change the interface of `data`.
-  emitter.emit(event, { data, source });
+  eventAggregator.emit(event, { data, source });
 }
 
 /**
