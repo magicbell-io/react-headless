@@ -18,9 +18,9 @@ export default function useMagicBellEvent(
   options: HookOptions = { source: 'any' },
 ) {
   useEffect(() => {
-    const callback = ({ data, source }: { data: unknown; source: EventSource }) => {
-      if (options.source === 'remote' && source !== 'remote') return;
-      handler(data);
+    const callback = (args: Partial<{ data: unknown; source: EventSource }> = {}) => {
+      if (options.source === 'remote' && args.source !== 'remote') return;
+      handler(args.data);
     };
 
     eventAggregator.on(event, callback);
