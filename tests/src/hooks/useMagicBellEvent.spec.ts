@@ -17,7 +17,7 @@ describe('hooks', () => {
       });
 
       expect(handler).toHaveBeenCalledTimes(1);
-      expect(handler).toHaveBeenCalledWith(data);
+      expect(handler).toHaveBeenCalledWith(data, 'remote');
     });
 
     it('cleans up on unmount', async () => {

@@ -14,13 +14,13 @@ interface HookOptions {
  */
 export default function useMagicBellEvent(
   event: string,
-  handler: (data?: unknown) => void,
+  handler: (data?: unknown, source?: EventSource) => void,
   options: HookOptions = { source: 'any' },
 ) {
   useEffect(() => {
     const callback = (args: Partial<{ data: unknown; source: EventSource }> = {}) => {
       if (options.source === 'remote' && args.source !== 'remote') return;
-      handler(args.data);
+      handler(args.data, args.source);
     };
 
     eventAggregator.on(event, callback);
