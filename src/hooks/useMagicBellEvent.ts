@@ -20,6 +20,7 @@ export default function useMagicBellEvent(
   useEffect(() => {
     const callback = (args: Partial<{ data: unknown; source: EventSource }> = {}) => {
       if (options.source === 'remote' && args.source !== 'remote') return;
+      if (options.source === 'local' && args.source !== 'local') return;
       handler(args.data, args.source);
     };
 

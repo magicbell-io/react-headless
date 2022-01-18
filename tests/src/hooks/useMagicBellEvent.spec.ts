@@ -53,5 +53,23 @@ describe('hooks', () => {
         });
       });
     });
+
+    describe('when listening to local events only', () => {
+      describe('when the emitted event is not local', () => {
+        it('does not invoke the handler function', () => {
+          const eventName = faker.random.alphaNumeric();
+          const handler = jest.fn();
+          const data = faker.random.objectElement();
+
+          renderHook(() => useMagicBellEvent(eventName, handler, { source: 'local' }));
+
+          act(() => {
+            eventAggregator.emit(eventName, { data, source: 'remote' });
+          });
+
+          expect(handler).not.toHaveBeenCalled();
+        });
+      });
+    });
   });
 });
