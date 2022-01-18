@@ -1,6 +1,5 @@
 import * as Ably from 'ably';
 import mitt from 'mitt';
-
 import clientSettings from '../stores/clientSettings';
 import NotificationRepository from '../stores/notifications/NotificationRepository';
 import { WebSocketConfig } from '../types/IRemoteConfig';
@@ -48,7 +47,7 @@ export function connectToAbly(config: WebSocketConfig) {
  * @param data The data object to pass along with the event.
  * @param source The origin of the event, local for an action that's triggered by the user in the current tab, remote if it's an event from another instance that should be mirrored.
  */
-function emit(event: string, data: unknown, source: 'local' | 'remote') {
+function emitEvent(event: string, data: unknown, source: 'local' | 'remote') {
   if (source === 'remote') {
     pushEventAggregator.emit(event, data);
   }
@@ -68,20 +67,23 @@ export function handleAblyEvent(event: Ably.Types.Message) {
   const { clientId } = clientSettings.getState();
   const eventName = event.name.replace(/\//gi, '.');
   const eventData = event.data;
-  const source = eventData.client_id && eventData.client_id === clientId ? 'local' : 'remote';
+  const isLoopbackEvent = eventData.client_id && eventData.client_id === clientId;
+
+  if (isLoopbackEvent) return Promise.resolve(false);
 
   if (typeof eventData.id === 'string') {
     if (eventName === 'notifications.delete') {
-      emit(eventName, eventData, source);
+      emitEvent(eventName, eventData, 'remote');
       return Promise.resolve(true);
     } else {
       const repository = new NotificationRepository();
       return repository.get(eventData.id).then((data) => {
-        emit(eventName, data.notification, source);
+        emitEvent(eventName, data.notification, 'remote');
+        return true;
       });
     }
   }
 
-  emit(eventName, eventData, source);
-  return Promise.resolve();
+  emitEvent(eventName, eventData, 'remote');
+  return Promise.resolve(true);
 }
