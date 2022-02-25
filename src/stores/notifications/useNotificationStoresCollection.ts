@@ -43,6 +43,8 @@ const useNotificationStoresCollection = create<INotificationsStoresCollection>((
         }),
       );
     } else {
+      // Provided for development support.
+      // eslint-disable-next-line no-console
       console.error(`Store not found. Define a store with the ${storeId} ID`);
     }
   },
