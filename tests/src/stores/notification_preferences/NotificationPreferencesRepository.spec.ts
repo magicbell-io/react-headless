@@ -3,6 +3,7 @@ import { Response, Server } from 'miragejs';
 
 import NotificationPreferencesRepository from '../../../../src/stores/notification_preferences/NotificationPreferencesRepository';
 import NotificationPreferencesFactory from '../../../factories/NotificationPreferencesFactory';
+import { sampleNotificationPreferences } from '../../../factories/NotificationPreferencesFactory';
 
 describe('stores', () => {
   describe('notification_preferences', () => {
@@ -28,17 +29,24 @@ describe('stores', () => {
             });
 
             const response = await repo.get();
-
-            expect(response).toEqual({ notificationPreferences: preferences });
+            expect(response).toEqual(preferences);
           });
         });
 
         describe('error handling', () => {
-          it('throws an error', async () => {
+          it('throws an error on 403 on get', async () => {
             server.get('/notification_preferences', new Response(403, {}, {}));
             expect.hasAssertions();
 
             await expect(() => repo.get()).rejects.toThrow('Request failed with status code 403');
+          });
+          it.only('throws an error on 403 on update', async () => {
+            server.put('/notification_preferences', new Response(403, {}, {}));
+            expect.hasAssertions();
+
+            await expect(() => repo.update(sampleNotificationPreferences)).rejects.toThrow(
+              'Request failed with status code 403',
+            );
           });
         });
       });
@@ -46,16 +54,16 @@ describe('stores', () => {
       describe('.update', () => {
         describe('successful response', () => {
           it('returns true', async () => {
-            const data = NotificationPreferencesFactory.build();
-            server.put('/notification_preferences', new Response(204, {}, ''));
-            const response = await repo.update(data);
+            const preferences = NotificationPreferencesFactory.build();
+            server.put('/notification_preferences', new Response(200, {}, { notification_preferences: preferences }));
+            const response = await repo.update(preferences);
 
-            expect(response).toBe(true);
+            expect(response).toEqual(preferences);
           });
         });
 
         describe('error handling', () => {
-          it('returns false', async () => {
+          it('returns false on 500', async () => {
             const data = NotificationPreferencesFactory.build();
             server.put('/notification_preferences', new Response(500, {}, ''));
             const response = await repo.update(data);

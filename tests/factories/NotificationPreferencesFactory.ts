@@ -1,32 +1,233 @@
 import faker from '@faker-js/faker';
 import { Factory } from 'rosie';
 
-export default new Factory().attr('categories', () => ({
-  newMessage: {
-    email: faker.datatype.boolean(),
-    inApp: faker.datatype.boolean(),
-    webPush: faker.datatype.boolean(),
-    mobilePush: faker.datatype.boolean(),
-  },
-  billing: {
-    email: faker.datatype.boolean(),
-    inApp: faker.datatype.boolean(),
-    webPush: faker.datatype.boolean(),
-    mobilePush: faker.datatype.boolean(),
-  },
-}));
+import { CategoryChannelPreferences } from '../../src/types/IRemoteNotificationPreferences';
+import deepFreeze from '../lib/deepFreeze';
 
-export const sampleNotificationPreferences = {
-  categories: {
-    newMessage: {
-      inApp: true,
-      email: false,
-      webPush: true,
+// NOTE: We deepfreeze all test objects to assure the library is immutable
+
+export default new Factory().attr(
+  'categories',
+  (): CategoryChannelPreferences =>
+    deepFreeze([
+      {
+        category: {
+          label: faker.random.word(),
+          slug: `${faker.random.word().toLowerCase()}_${faker.random.word().toLowerCase()}`,
+        },
+        channels: [
+          {
+            label: 'In app',
+            slug: 'in_app',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Mobile push',
+            slug: 'mobile_push',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Web push',
+            slug: 'web_push',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Email',
+            slug: 'email',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Slack',
+            slug: 'slack',
+            enabled: faker.datatype.boolean(),
+          },
+        ],
+      },
+      {
+        category: {
+          label: faker.random.word(),
+          slug: `${faker.random.word().toLowerCase}_${faker.random.word().toLowerCase}`,
+        },
+        channels: [
+          {
+            label: 'In app',
+            slug: 'in_app',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Mobile push',
+            slug: 'mobile_push',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Web push',
+            slug: 'web_push',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Email',
+            slug: 'email',
+            enabled: faker.datatype.boolean(),
+          },
+          {
+            label: 'Slack',
+            slug: 'slack',
+            enabled: faker.datatype.boolean(),
+          },
+        ],
+      },
+    ]),
+);
+
+export const sampleNotificationPreferences: CategoryChannelPreferences = deepFreeze({
+  categories: [
+    {
+      category: {
+        label: 'New Message',
+        slug: 'new_message',
+      },
+      channels: [
+        {
+          label: 'In app',
+          slug: 'in_app',
+          enabled: true,
+        },
+        {
+          label: 'Mobile push',
+          slug: 'mobile_push',
+          enabled: true,
+        },
+      ],
     },
-    marketing: {
-      inApp: true,
-      email: false,
-      webPush: false,
+    {
+      category: {
+        label: 'Marketing',
+        slug: 'marketing',
+      },
+      channels: [
+        {
+          label: 'In app',
+          slug: 'in_app',
+          enabled: false,
+        },
+        {
+          label: 'Mobile push',
+          slug: 'mobile_push',
+          enabled: true,
+        },
+      ],
     },
-  },
-};
+  ],
+});
+
+export const sampleNotificationPreferencesChanged: CategoryChannelPreferences = deepFreeze({
+  categories: [
+    {
+      category: {
+        label: 'New Message',
+        slug: 'new_message',
+      },
+      channels: [
+        {
+          label: 'In app',
+          slug: 'in_app',
+          enabled: false, // changed
+        },
+        {
+          label: 'Mobile push',
+          slug: 'mobile_push',
+          enabled: true,
+        },
+      ],
+    },
+    {
+      category: {
+        label: 'Marketing',
+        slug: 'marketing',
+      },
+      channels: [
+        {
+          label: 'In app',
+          slug: 'in_app',
+          enabled: true, // changed
+        },
+        {
+          label: 'Mobile push',
+          slug: 'mobile_push',
+          enabled: true,
+        },
+      ],
+    },
+  ],
+});
+
+export const sampleNotificationSaveResponse: CategoryChannelPreferences = deepFreeze({
+  categories: [
+    {
+      category: {
+        label: 'New Message',
+        slug: 'new_message',
+      },
+      channels: [
+        {
+          label: 'In app',
+          slug: 'in_app',
+          enabled: false,
+        },
+        {
+          label: 'Mobile push',
+          slug: 'mobile_push',
+          enabled: false, // mocking that this value was changed on server side
+        },
+      ],
+    },
+    {
+      category: {
+        label: 'Marketing',
+        slug: 'marketing',
+      },
+      channels: [
+        {
+          label: 'In app',
+          slug: 'in_app',
+          enabled: true,
+        },
+        {
+          label: 'Mobile push',
+          slug: 'mobile_push',
+          enabled: true,
+        },
+        // New channel
+        {
+          label: 'Email',
+          slug: 'email',
+          enabled: true,
+        },
+      ],
+    },
+    {
+      category: {
+        label: 'New Category',
+        slug: 'new_category',
+      },
+      channels: [
+        {
+          label: 'In app',
+          slug: 'in_app',
+          enabled: true,
+        },
+        {
+          label: 'Mobile push',
+          slug: 'mobile_push',
+          enabled: true,
+        },
+        // New channel
+        {
+          label: 'Email',
+          slug: 'email',
+          enabled: true,
+        },
+      ],
+    },
+  ],
+});

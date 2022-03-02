@@ -1,12 +1,17 @@
-import mergeDeepRight from 'ramda/src/mergeDeepRight';
+import produce from 'immer';
 import create from 'zustand';
 
-import { DeepPartial } from '../../types/DeepPartial';
-import IRemoteNotificationPreferences, { CategoryPreference } from '../../types/IRemoteNotificationPreferences';
+import IRemoteNotificationPreferences, { CategoryChannelPreferences } from '../../types/IRemoteNotificationPreferences';
 import NotificationPreferencesRepository from './NotificationPreferencesRepository';
 
-interface NotificationPreferences extends IRemoteNotificationPreferences {
+export interface INotificationPreferences extends IRemoteNotificationPreferences {
   lastFetchedAt?: number;
+
+  /**
+   * Clears the local notification preferences repository without affecting
+   * storage.
+   */
+  clear: () => void;
 
   /**
    * Fetch the notification preferences for the current user from the MagicBell
@@ -19,7 +24,7 @@ interface NotificationPreferences extends IRemoteNotificationPreferences {
    *
    * @preferences Object containing the new preferences.
    */
-  save: (preferences: { categories: DeepPartial<CategoryPreference> }) => Promise<void>;
+  save: (preferences: CategoryChannelPreferences) => Promise<void>;
 
   _repository: NotificationPreferencesRepository;
 }
@@ -32,23 +37,49 @@ interface NotificationPreferences extends IRemoteNotificationPreferences {
  * const { fetch } = useNotificationPreferences();
  * useEffect(() => fetch(), []);
  */
-const useNotificationPreferences = create<NotificationPreferences>((set, get) => ({
-  categories: {},
+const useNotificationPreferences = create<INotificationPreferences>((set, get) => ({
+  categories: [],
 
   _repository: new NotificationPreferencesRepository(),
 
-  fetch: async () => {
-    const { _repository } = get();
-    const { notificationPreferences: json } = await _repository.get();
-
-    set({ ...json, lastFetchedAt: Date.now() });
+  clear: () => {
+    set(
+      produce((draft: INotificationPreferences) => {
+        draft.lastFetchedAt = Date.now();
+        draft.categories = [];
+      }),
+    );
   },
 
-  save: async (data) => {
-    const { _repository, categories } = get();
-    _repository.update({ notificationPreferences: data });
+  fetch: async () => {
+    const { _repository } = get();
+    const preferencesFromServer = await _repository.get();
+    if (!preferencesFromServer) {
+      // TODO: See NotificationPreferencesRepository.update todo
+      return;
+    }
 
-    set({ categories: mergeDeepRight(categories, data.categories), lastFetchedAt: Date.now() });
+    set(
+      produce((draft: INotificationPreferences) => {
+        draft.lastFetchedAt = Date.now();
+        draft.categories = preferencesFromServer.categories;
+      }),
+    );
+  },
+
+  save: async (preferences) => {
+    const { _repository } = get();
+    const preferencesFromServer = await _repository.update(preferences);
+    if (!preferencesFromServer) {
+      // TODO: See NotificationPreferencesRepository.update todo
+      return;
+    }
+    set(
+      produce((draft: INotificationPreferences) => {
+        draft.lastFetchedAt = Date.now();
+        draft.categories = preferencesFromServer.categories;
+      }),
+    );
   },
 }));
 
