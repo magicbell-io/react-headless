@@ -51,13 +51,6 @@ export type CategoryChannelPreference = {
 /**
  * All category preferences: in practice containing category preferences for a given project and/or user.
  */
-export type CategoryChannelPreferences = {
-  categories: CategoryChannelPreference[];
-};
-
-/**
- * All category preferences: in practice containing category preferences for a given project and/or user.
- */
 export default interface IRemoteNotificationPreferences {
   categories: CategoryChannelPreference[];
 }
