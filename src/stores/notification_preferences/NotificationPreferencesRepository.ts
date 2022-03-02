@@ -28,7 +28,7 @@ export default class NotificationPreferencesRepository {
    */
   async get(): Promise<IWrappedNotificationPreferences> {
     const url = this.remotePathOrUrl;
-    const json = await fetchAPI(url);
+    const json = await fetchAPI(url, undefined, { 'Accept-Version': 'v2' });
 
     return humps.camelizeKeys(json);
   }
@@ -42,7 +42,7 @@ export default class NotificationPreferencesRepository {
   async update(data: IRemoteNotificationPreferences): Promise<IWrappedNotificationPreferences> {
     const url = this.remotePathOrUrl;
     const payload = humps.decamelizeKeys({ notificationPreferences: data });
-    const json = await putAPI(url, payload);
+    const json = await putAPI(url, payload, undefined, { 'Accept-Version': 'v2' });
 
     return humps.camelizeKeys(json);
   }

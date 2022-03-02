@@ -28,8 +28,6 @@ export function buildAPIHeaders() {
   const headers = {
     'X-MAGICBELL-CLIENT-ID': clientId,
     'X-MAGICBELL-API-KEY': apiKey,
-    // From this point on, react headless only works against the v2 backend.
-    'Accept-Version': 'v2',
   };
 
   if (apiSecret) headers['X-MAGICBELL-API-SECRET'] = apiSecret;
@@ -54,9 +52,10 @@ function sendAPIRequest(
   url: string,
   data?: Record<string, unknown>,
   params?: Record<string, unknown>,
+  headers: Record<string, string> = {},
 ): Promise<unknown> {
   const { serverURL } = clientSettings.getState();
-  const headers = buildAPIHeaders();
+  const requestHeaders = { ...buildAPIHeaders(), ...headers };
 
   // get axios from the registry, to allow for mocking and use of interceptors
   const client = registry.get('axios', axios);
@@ -66,7 +65,7 @@ function sendAPIRequest(
     url,
     data,
     params,
-    headers,
+    headers: requestHeaders,
     baseURL: serverURL,
   }).then(
     (response: ServerResponse) => response.data,
@@ -82,8 +81,8 @@ function sendAPIRequest(
  * @param url - the server URL that will be used for the request
  * @param params - the URL parameters to be sent with the request
  */
-export function fetchAPI(url: string, params = {}) {
-  return sendAPIRequest('get', url, undefined, params);
+export function fetchAPI(url: string, params: Record<string, unknown> = {}, headers?: Record<string, string>) {
+  return sendAPIRequest('get', url, undefined, params, headers);
 }
 
 /**
@@ -93,8 +92,13 @@ export function fetchAPI(url: string, params = {}) {
  * @param data - the data to be sent as the request body
  * @param params - the URL parameters to be sent with the request
  */
-export function postAPI(url: string, data: Record<string, unknown> = {}, params = {}) {
-  return sendAPIRequest('post', url, data, params);
+export function postAPI(
+  url: string,
+  data: Record<string, unknown> = {},
+  params: Record<string, unknown> = {},
+  headers?: Record<string, string>,
+) {
+  return sendAPIRequest('post', url, data, params, headers);
 }
 
 /**
@@ -103,8 +107,8 @@ export function postAPI(url: string, data: Record<string, unknown> = {}, params 
  * @param url - the server URL that will be used for the request
  * @param params - the URL parameters to be sent with the request
  */
-export function deleteAPI(url: string, params = {}) {
-  return sendAPIRequest('delete', url, undefined, params);
+export function deleteAPI(url: string, params: Record<string, unknown> = {}, headers?: Record<string, string>) {
+  return sendAPIRequest('delete', url, undefined, params, headers);
 }
 
 /**
@@ -115,6 +119,6 @@ export function deleteAPI(url: string, params = {}) {
  * @param params - the URL parameters to be sent with the request
  * * @returns - A promise.
  */
-export function putAPI(url: string, data: Record<string, unknown>, params = {}): Promise<unknown> {
-  return sendAPIRequest('put', url, data, params);
+export function putAPI(url: string, data: Record<string, unknown>, params = {}, headers?: Record<string, string>) {
+  return sendAPIRequest('put', url, data, params, headers);
 }
