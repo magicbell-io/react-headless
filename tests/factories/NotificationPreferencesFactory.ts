@@ -11,10 +11,8 @@ export default new Factory().attr(
   (): IRemoteNotificationPreferences =>
     deepFreeze([
       {
-        category: {
-          label: faker.random.word(),
-          slug: `${faker.random.word().toLowerCase()}_${faker.random.word().toLowerCase()}`,
-        },
+        label: faker.random.word(),
+        slug: `${faker.random.word().toLowerCase()}_${faker.random.word().toLowerCase()}`,
         channels: [
           {
             label: 'In app',
@@ -44,10 +42,8 @@ export default new Factory().attr(
         ],
       },
       {
-        category: {
-          label: faker.random.word(),
-          slug: `${faker.random.word().toLowerCase}_${faker.random.word().toLowerCase}`,
-        },
+        label: faker.random.word(),
+        slug: `${faker.random.word().toLowerCase}_${faker.random.word().toLowerCase}`,
         channels: [
           {
             label: 'In app',
@@ -82,10 +78,8 @@ export default new Factory().attr(
 export const sampleNotificationPreferences: IRemoteNotificationPreferences = deepFreeze({
   categories: [
     {
-      category: {
-        label: 'New Message',
-        slug: 'new_message',
-      },
+      label: 'New Message',
+      slug: 'new_message',
       channels: [
         {
           label: 'In app',
@@ -100,10 +94,8 @@ export const sampleNotificationPreferences: IRemoteNotificationPreferences = dee
       ],
     },
     {
-      category: {
-        label: 'Marketing',
-        slug: 'marketing',
-      },
+      label: 'Marketing',
+      slug: 'marketing',
       channels: [
         {
           label: 'In app',
@@ -123,10 +115,8 @@ export const sampleNotificationPreferences: IRemoteNotificationPreferences = dee
 export const sampleNotificationPreferencesChanged: IRemoteNotificationPreferences = deepFreeze({
   categories: [
     {
-      category: {
-        label: 'New Message',
-        slug: 'new_message',
-      },
+      label: 'New Message',
+      slug: 'new_message',
       channels: [
         {
           label: 'In app',
@@ -141,10 +131,8 @@ export const sampleNotificationPreferencesChanged: IRemoteNotificationPreference
       ],
     },
     {
-      category: {
-        label: 'Marketing',
-        slug: 'marketing',
-      },
+      label: 'Marketing',
+      slug: 'marketing',
       channels: [
         {
           label: 'In app',
@@ -164,10 +152,8 @@ export const sampleNotificationPreferencesChanged: IRemoteNotificationPreference
 export const sampleNotificationSaveResponse: IRemoteNotificationPreferences = deepFreeze({
   categories: [
     {
-      category: {
-        label: 'New Message',
-        slug: 'new_message',
-      },
+      label: 'New Message',
+      slug: 'new_message',
       channels: [
         {
           label: 'In app',
@@ -182,10 +168,8 @@ export const sampleNotificationSaveResponse: IRemoteNotificationPreferences = de
       ],
     },
     {
-      category: {
-        label: 'Marketing',
-        slug: 'marketing',
-      },
+      label: 'Marketing',
+      slug: 'marketing',
       channels: [
         {
           label: 'In app',
@@ -206,10 +190,8 @@ export const sampleNotificationSaveResponse: IRemoteNotificationPreferences = de
       ],
     },
     {
-      category: {
-        label: 'New Category',
-        slug: 'new_category',
-      },
+      label: 'New Category',
+      slug: 'new_category',
       channels: [
         {
           label: 'In app',
