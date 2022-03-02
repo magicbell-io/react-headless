@@ -50,14 +50,24 @@ const useNotificationPreferences = create<INotificationPreferences>((set, get) =
 
   fetch: async () => {
     const { _repository } = get();
-    const { notificationPreferences: json } = await _repository.get();
-    set({ ...json, lastFetchedAt: Date.now() });
+
+    try {
+      const { notificationPreferences: json } = await _repository.get();
+      set({ ...json, lastFetchedAt: Date.now() });
+    } catch (error) {
+      set({ categories: [], lastFetchedAt: Date.now() });
+    }
   },
 
   save: async (preferences) => {
     const { _repository } = get();
-    const { notificationPreferences: json } = await _repository.update(preferences);
-    set({ ...json, lastFetchedAt: Date.now() });
+
+    try {
+      const { notificationPreferences: json } = await _repository.update(preferences);
+      set({ ...json, lastFetchedAt: Date.now() });
+    } catch (error) {
+      set({ categories: [], lastFetchedAt: Date.now() });
+    }
   },
 }));
 

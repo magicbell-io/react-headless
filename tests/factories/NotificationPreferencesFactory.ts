@@ -1,14 +1,14 @@
 import faker from '@faker-js/faker';
 import { Factory } from 'rosie';
 
-import { CategoryChannelPreferences } from '../../src/types/IRemoteNotificationPreferences';
+import IRemoteNotificationPreferences from '../../src/types/IRemoteNotificationPreferences';
 import deepFreeze from '../lib/deepFreeze';
 
 // NOTE: We deepfreeze all test objects to assure the library is immutable
 
 export default new Factory().attr(
   'categories',
-  (): CategoryChannelPreferences =>
+  (): IRemoteNotificationPreferences =>
     deepFreeze([
       {
         category: {
@@ -79,7 +79,7 @@ export default new Factory().attr(
     ]),
 );
 
-export const sampleNotificationPreferences: CategoryChannelPreferences = deepFreeze({
+export const sampleNotificationPreferences: IRemoteNotificationPreferences = deepFreeze({
   categories: [
     {
       category: {
@@ -120,7 +120,7 @@ export const sampleNotificationPreferences: CategoryChannelPreferences = deepFre
   ],
 });
 
-export const sampleNotificationPreferencesChanged: CategoryChannelPreferences = deepFreeze({
+export const sampleNotificationPreferencesChanged: IRemoteNotificationPreferences = deepFreeze({
   categories: [
     {
       category: {
@@ -161,7 +161,7 @@ export const sampleNotificationPreferencesChanged: CategoryChannelPreferences = 
   ],
 });
 
-export const sampleNotificationSaveResponse: CategoryChannelPreferences = deepFreeze({
+export const sampleNotificationSaveResponse: IRemoteNotificationPreferences = deepFreeze({
   categories: [
     {
       category: {
