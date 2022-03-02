@@ -1,4 +1,3 @@
-import produce from 'immer';
 import create from 'zustand';
 
 import IRemoteNotificationPreferences from '../../types/IRemoteNotificationPreferences';
@@ -6,11 +5,6 @@ import NotificationPreferencesRepository from './NotificationPreferencesReposito
 
 export interface INotificationPreferences extends IRemoteNotificationPreferences {
   lastFetchedAt?: number;
-
-  /**
-   * Clears the local notification preferences repository without affecting storage.
-   */
-  clear: () => void;
 
   /**
    * Fetch the notification preferences for the current user from the MagicBell server.
@@ -38,15 +32,6 @@ const useNotificationPreferences = create<INotificationPreferences>((set, get) =
   categories: [],
 
   _repository: new NotificationPreferencesRepository(),
-
-  clear: () => {
-    set(
-      produce((draft: INotificationPreferences) => {
-        draft.lastFetchedAt = Date.now();
-        draft.categories = [];
-      }),
-    );
-  },
 
   fetch: async () => {
     const { _repository } = get();

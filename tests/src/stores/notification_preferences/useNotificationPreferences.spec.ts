@@ -13,10 +13,11 @@ describe('useNotificationPreferences', () => {
   let server: Server<AnyRegistry>;
 
   beforeEach(() => {
+    // useNotificationPreferences is a singleton so we clear the state before each test
+    // @todo: Reset all zustand stores before each test
+    useNotificationPreferences.setState({ categories: [] });
+
     server = new Server({ timing: 50, environment: 'test', urlPrefix: 'https://api.magicbell.com' });
-    // useNotificationPreferences is a singleton so we clear the state
-    // before each test.
-    useNotificationPreferences.getState().clear();
   });
 
   afterEach(() => {
