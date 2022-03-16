@@ -13,10 +13,7 @@ function ensureArray(value) {
 
 export type NotificationCompareStrategy = (
   notification: IRemoteNotification,
-  // TODO: Update this to unknown for V2. Also verify type is still used
-  // in code base.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: Record<string, any>,
+  context: Record<string, unknown>,
   comparator?: IStrategyComparator,
 ) => { result: boolean; delta: string[] };
 
@@ -30,22 +27,19 @@ export type NotificationCompareStrategy = (
  */
 export function objMatchesContext(
   notification: IRemoteNotification,
-  // TODO: Convert this to unknown in V2
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: Record<string, any>,
+  context: Record<string, unknown>,
   comparator: IStrategyComparator = eq,
 ) {
   const diff: string[] = [];
 
   Object.keys(context).forEach((attr) => {
-    const conditionValue = context[attr];
+    const value = context[attr];
 
     if (
-      (attr === 'read' && !comparator(!isNil(notification.readAt), conditionValue)) ||
-      (attr === 'seen' && !comparator(!isNil(notification.seenAt), conditionValue)) ||
-      (attr === 'categories' &&
-        ensureArray(conditionValue).some((category) => !comparator(notification.category, category))) ||
-      (Object.hasOwnProperty.call(notification, attr) && !comparator(notification[attr], conditionValue))
+      (attr === 'read' && !comparator(!isNil(notification.readAt), value)) ||
+      (attr === 'seen' && !comparator(!isNil(notification.seenAt), value)) ||
+      (attr === 'categories' && ensureArray(value).some((category) => !comparator(notification.category, category))) ||
+      (Object.hasOwnProperty.call(notification, attr) && !comparator(notification[attr], value))
     ) {
       diff.push(attr);
     }
