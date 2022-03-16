@@ -33,14 +33,15 @@ export function objMatchesContext(
   const diff: string[] = [];
 
   Object.keys(context).forEach((attr) => {
-    const value = context[attr];
+    const condition = context[attr];
 
     if (
-      (attr === 'read' && !comparator(!isNil(notification.readAt), value)) ||
-      (attr === 'seen' && !comparator(!isNil(notification.seenAt), value)) ||
-      (attr === 'categories' && ensureArray(value).every((category) => !comparator(notification.category, category))) ||
-      (attr === 'topics' && ensureArray(value).every((topic) => !comparator(notification.topic, topic))) ||
-      (Object.hasOwnProperty.call(notification, attr) && !comparator(notification[attr], value))
+      (attr === 'read' && !comparator(!isNil(notification.readAt), condition)) ||
+      (attr === 'seen' && !comparator(!isNil(notification.seenAt), condition)) ||
+      (attr === 'categories' &&
+        ensureArray(condition).every((category) => !comparator(notification.category, category))) ||
+      (attr === 'topics' && ensureArray(condition).every((topic) => !comparator(notification.topic, topic))) ||
+      (Object.hasOwnProperty.call(notification, attr) && !comparator(notification[attr], condition))
     ) {
       diff.push(attr);
     }
