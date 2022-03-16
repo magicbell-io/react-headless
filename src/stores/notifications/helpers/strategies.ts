@@ -8,7 +8,7 @@ function eq(value, other) {
 }
 
 function ensureArray(value) {
-  return Array.isArray(value) ? value : [value];
+  return Array.isArray(value) ? value : String(value).split(',');
 }
 
 export type NotificationCompareStrategy = (
