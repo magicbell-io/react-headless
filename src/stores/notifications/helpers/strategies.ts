@@ -39,6 +39,7 @@ export function objMatchesContext(
       (attr === 'read' && !comparator(!isNil(notification.readAt), value)) ||
       (attr === 'seen' && !comparator(!isNil(notification.seenAt), value)) ||
       (attr === 'categories' && ensureArray(value).some((category) => !comparator(notification.category, category))) ||
+      (attr === 'topics' && ensureArray(value).every((topic) => !comparator(notification.topic, topic))) ||
       (Object.hasOwnProperty.call(notification, attr) && !comparator(notification[attr], value))
     ) {
       diff.push(attr);
