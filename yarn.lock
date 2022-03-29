@@ -1336,9 +1336,9 @@
     strip-json-comments "^3.1.1"
 
 "@faker-js/faker@^6.0.0-alpha.7":
-  version "6.0.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-6.0.0-beta.0.tgz#8d772b0c37ebc450e3a95114be549e8fd245f16f"
-  integrity sha512-7QdsX5ZqUEz87twuoKEJe7NHn6OHQsVYQpJcK0disnR0XuVb9FEgQUcsViard9OTNN/fG/nZT63V35vieOwZ4Q==
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-6.1.1.tgz#adf002d986e1751daadfcf65d1cc03944dab3ced"
+  integrity sha512-8yq1LJVGn4GY06riLddIU1LbJm15yjt46hjfkpWNpH/mqdciPOBVzicKOJxzQNrGgVHVBxcdm7sgwjI/Y19MYw==
 
 "@gar/promisify@^1.0.1":
   version "1.1.2"
